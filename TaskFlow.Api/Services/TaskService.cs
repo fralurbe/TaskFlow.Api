@@ -5,15 +5,14 @@ using TaskFlow.Api.Models;
 
 namespace TaskFlow.Api.Services {
     public class TaskService : ITaskService {
-        private readonly ApplicationDbContext _context;
-
+        ApplicationDbContext _context;
         public TaskService(ApplicationDbContext context) {
             _context = context;
-        }
 
+        }
         public async Task<IEnumerable<TaskReadDto>> GetAllTasksAsync() {
             var tasks = await _context.Tasks.ToListAsync();
-            // Mapeo manual (luego podrías usar AutoMapper, pero para aprender es mejor así)
+
             return tasks.Select(t => new TaskReadDto {
                 Id = t.Id,
                 Title = t.Title,
@@ -21,18 +20,46 @@ namespace TaskFlow.Api.Services {
             });
         }
 
-        public async Task<TaskReadDto> CreateTaskAsync(TaskCreateDto taskDto) {
-            var task = new TaskItem { Title = taskDto.Title };
-            _context.Tasks.Add(task);
-            await _context.SaveChangesAsync(); // Aquí se guarda en Azure SQL
-
-            return new TaskReadDto { Id = task.Id, Title = task.Title };
+        public async Task<TaskReadDto> GetTaskById(int id) {
+            var t = await _context.Tasks.FindAsync(id);
+            if (t == null) return null;
+            return new TaskReadDto {
+                Id = t.Id,
+                Title = t.Title,
+                IsCompleted = t.IsCompleted
+            };
         }
 
-        public async Task<TaskReadDto?> GetTaskByIdAsync(int id) {
+        public async Task<TaskReadDto> CreateTaskAsync(TaskCreateDto taskDto) {
+            
+            var taskParaDb = new TaskItem {
+                Title = taskDto.Title,
+                IsCompleted = false
+            };
+
+            _context.Tasks.Add(taskParaDb);
+
+            await _context.SaveChangesAsync();
+
+            // 4. "Mapeo" de salida: Devolvemos el DTO de lectura.
+            // Ahora 'taskParaDb.Id' ya tiene el número que generó la base de datos.
+            return new TaskReadDto {
+                Id = taskParaDb.Id,
+                Title = taskParaDb.Title,
+                IsCompleted = taskParaDb.IsCompleted
+            };
+        }
+
+        public async Task DeleteTaskAsync(int id) {
+            // 1. Buscamos la tarea en la DB por su ID
             var task = await _context.Tasks.FindAsync(id);
-            if (task == null) return null;
-            return new TaskReadDto { Id = task.Id, Title = task.Title };
+
+            // 2. Si existe, la eliminamos del contexto
+            if (task != null) {
+                _context.Tasks.Remove(task);
+                // 3. Guardamos cambios para que SQL se entere
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
