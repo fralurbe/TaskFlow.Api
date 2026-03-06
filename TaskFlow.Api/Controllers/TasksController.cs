@@ -1,31 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TaskFlow.Api.DTOs;
+using TaskFlow.Api.Models;
 using TaskFlow.Api.Services;
 
 namespace TaskFlow.Api.Controllers {
-    [ApiController] // Indica que esto es una API y no una web con HTML
-    [Route("api/[controller]")] // La ruta será: api/tasks
+    [ApiController]
+    [Route("api/[controller]")] // La URL será: api/tasks
     public class TasksController : ControllerBase {
-        private readonly ITaskService _service;
+        private readonly ITaskService _taskService;
 
-        // "Profesor": Aquí pedimos el contrato (Interfaz), no la clase real.
-        // .NET se encarga de darnos el TaskService automáticamente.
-        public TasksController(ITaskService service) {
-            _service = service;
+        // Le pedimos al sistema que nos traiga el servicio que registramos en Program.cs
+        public TasksController(ITaskService taskService) {
+            _taskService = taskService;
         }
 
-        [HttpGet] // Para leer todas las tareas
-        public async Task<ActionResult<IEnumerable<TaskReadDto>>> GetTasks() {
-            var tasks = await _service.GetAllTasksAsync();
-            return Ok(tasks); // Devuelve un código 200 OK con la lista
+        // GET: api/tasks
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks() {
+            var tasks = await _taskService.GetAllTasksAsync();
+            return Ok(tasks);
         }
 
-        [HttpPost] // Para crear una nueva tarea
-        public async Task<ActionResult<TaskReadDto>> CreateTask(TaskCreateDto taskCreateDto) {
-            var taskReadDto = await _service.CreateTaskAsync(taskCreateDto);
+        [HttpPost]
+        public async Task<ActionResult<TaskReadDto>> CreateTask(TaskCreateDto taskDto) {
+            // Ahora le pasamos el DTO al servicio, que es lo que él espera
+            var newTask = await _taskService.CreateTaskAsync(taskDto);
 
-            // Devuelve un código 201 (Created) y la ubicación del nuevo recurso
-            return CreatedAtAction(nameof(GetTasks), new { id = taskReadDto.Id }, taskReadDto);
+            // El servicio nos devuelve un TaskReadDto (la versión de lectura)
+            return CreatedAtAction(nameof(GetTasks), new { id = newTask.Id }, newTask);
         }
     }
 }
