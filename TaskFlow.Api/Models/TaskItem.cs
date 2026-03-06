@@ -5,7 +5,6 @@
         public string? Description { get; set; }
         public bool IsCompleted { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        // Esto será clave para la semana 4 (Storage)
-        public string? AttachmentUrl { get; set; }
+        public string? AttachmentUrl { get; set; }        
     }
 }
