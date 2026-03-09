@@ -31,9 +31,12 @@ namespace TaskFlow.Api.Services {
         }
 
         public async Task<TaskReadDto> CreateTaskAsync(TaskCreateDto taskDto) {
-            
+            if (string.IsNullOrEmpty(taskDto.Title)) {
+                throw new Exception("¡Oye! No puedes crear una tarea sin título.");
+            }
+
             var taskParaDb = new TaskItem {
-                Title = taskDto.Title,
+                Title = "IMPORTANTE " + taskDto.Title,
                 IsCompleted = false
             };
 

@@ -22,12 +22,18 @@ namespace TaskFlow.Api.Controllers {
         }
 
         [HttpPost]
-        public async Task<ActionResult<TaskReadDto>> CreateTask(TaskCreateDto taskDto) {
+        public async Task<ActionResult<TaskReadDto>> CreateTask(TaskCreateDto taskDto) {            
             // Ahora le pasamos el DTO al servicio, que es lo que él espera
             var newTask = await _taskService.CreateTaskAsync(taskDto);
 
             // El servicio nos devuelve un TaskReadDto (la versión de lectura)
             return CreatedAtAction(nameof(GetTasks), new { id = newTask.Id }, newTask);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteTask(int id) {
+            await _taskService.DeleteTaskAsync(id);
+            return NoContent();
         }
     }
 }
