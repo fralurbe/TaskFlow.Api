@@ -44,5 +44,18 @@ namespace TaskFlow.Api.Controllers {
             await _taskService.DeleteTaskAsync(id);
             return NoContent();
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutTask(int id, TaskUpdateDto taskUpdateDto) {
+            if (string.IsNullOrEmpty(taskUpdateDto.Title)) {
+                return BadRequest("El título es obligatorio."); //400
+            }
+
+            var task = await _taskService.UpdateTaskAsync(id, taskUpdateDto);
+            if (task == false)
+                return NotFound($"No se pudo encontrar la tarea con ID {id}"); //404
+            return NoContent(); // 204
+
+        }
     }
 }

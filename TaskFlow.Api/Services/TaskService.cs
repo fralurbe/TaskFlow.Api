@@ -121,6 +121,24 @@ namespace TaskFlow.Api.Services {
             await _context.SaveChangesAsync();
             
             return true;
-        }        
+        }
+
+        public async Task<string> UpdateTaskAsync(int id, TaskUpdateDto updateDto) {
+            // Filtramos en la base de datos
+            var task = await _context.Tasks.FindAsync(id);
+            if (task == null) return "TASK_NO_ENCONTRADA";
+
+            // ¿Existe la categoría?
+            var categoryExists = await _context.Categories.AnyAsync(c => c.Id == updateDto.CategoryId);
+            if (!categoryExists) return "CATEGORIA_NO_ENCONTRADA";
+            
+            // Actualizar datos
+            task.Title = updateDto.Title;
+            task.IsCompleted = updateDto.IsCompleted;
+            task.CategoryId = updateDto.CategoryId;            
+            
+            return "ÉXITO";
+            
+        }
     }
 }

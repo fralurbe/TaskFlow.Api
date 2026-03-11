@@ -23,5 +23,7 @@ namespace TaskFlow.Api.Services {
         public Task<bool> DeleteCategoryAsync(int id);
 
         public Task<IEnumerable<TaskReadDto>> GetTasksByCategoryAsync(int categoryId);
+
+        public Task<bool> UpdateTaskAsync(int id, TaskUpdateDto updateDto);
     }
 }
