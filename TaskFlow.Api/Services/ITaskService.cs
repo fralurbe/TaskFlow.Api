@@ -24,6 +24,6 @@ namespace TaskFlow.Api.Services {
 
         public Task<IEnumerable<TaskReadDto>> GetTasksByCategoryAsync(int categoryId);
 
-        public Task<bool> UpdateTaskAsync(int id, TaskUpdateDto updateDto);
+        public Task<string> UpdateTaskAsync(int id, TaskUpdateDto updateDto);
     }
 }
