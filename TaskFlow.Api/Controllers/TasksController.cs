@@ -24,8 +24,8 @@ namespace TaskFlow.Api.Controllers {
 
         [HttpGet("categoria/{categoryId}")]
         public async Task<ActionResult<IEnumerable<TaskReadDto>>> GetTasksByCategory (int categoryId) {
-            if (categoryId < 0)
-                return NoContent();
+            if (categoryId <= 0)
+                return BadRequest("No se admiten ids negativos");
             var tasks = await _taskService.GetTasksByCategoryAsync(categoryId);
             return Ok(tasks);
         }
