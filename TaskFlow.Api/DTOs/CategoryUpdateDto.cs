@@ -1,6 +1,5 @@
 ﻿namespace TaskFlow.Api.DTOs {
-    public class CategoryUpdateDto {
-        public int Id { get; set; }
+    public class CategoryUpdateDto {        
         public string Name { get; set; }
     }
 }
