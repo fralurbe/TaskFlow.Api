@@ -40,22 +40,24 @@ namespace TaskFlow.Api.Controllers {
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteTask(int id) {
-            await _taskService.DeleteTaskAsync(id);
-            return NoContent();
+        public async Task<IActionResult> DeleteTask(int id) {
+            var eliminado = await _taskService.DeleteTaskAsync(id);
+
+            if (!eliminado)
+                return NotFound($"No existe la tarea {id}"); //404
+            return NoContent();//204
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutTask(int id, TaskUpdateDto taskUpdateDto) {
-            if (string.IsNullOrEmpty(taskUpdateDto.Title)) {
-                return BadRequest("El título es obligatorio."); //400
-            }
+        public async Task<IActionResult> UpdateTask(int id, TaskUpdateDto updateDto) {
+            var resultado = await _taskService.UpdateTaskAsync(id, updateDto);
 
-            var task = await _taskService.UpdateTaskAsync(id, taskUpdateDto);
-            if (task == false)
-                return NotFound($"No se pudo encontrar la tarea con ID {id}"); //404
-            return NoContent(); // 204
-
+            return resultado switch {
+                "SUCCESS" => NoContent(),
+                "TASK_NOT_FOUND" => NotFound($"No se encontró la tarea con ID {id}"),
+                "CATEGORY_NOT_FOUND" => BadRequest("La categoría especificada no existe."),
+                _ => StatusCode(500, "Error interno del servidor")
+            };
         }
     }
 }

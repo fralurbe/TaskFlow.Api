@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 // Registramos el contexto de la base de datos
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

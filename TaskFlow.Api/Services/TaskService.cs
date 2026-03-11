@@ -81,7 +81,7 @@ namespace TaskFlow.Api.Services {
             };
         }
 
-        public async Task DeleteTaskAsync(int id) {
+        public async Task<bool> DeleteTaskAsync(int id) {
             // 1. Buscamos la tarea en la DB por su ID
             var task = await _context.Tasks.FindAsync(id);
 
@@ -90,55 +90,38 @@ namespace TaskFlow.Api.Services {
                 _context.Tasks.Remove(task);
                 // 3. Guardamos cambios para que SQL se entere
                 await _context.SaveChangesAsync();
+                return true;
             }
-        }
-
-        public async Task<Category> CreateCategoryAsync(CategoryCreateDto categoryDto) {
-            var nuevaCategoria = new Category {
-                Name = categoryDto.Name
-            };
-
-            _context.Categories.Add(nuevaCategoria);
-            await _context.SaveChangesAsync();
-            return nuevaCategoria;
-        }
-
-        public async  Task<IEnumerable<CategoryReadDto>> GetAllCategoriesAsync() {
-            var categories = await _context.Categories.ToListAsync();
-
-            return categories.Select(c => new CategoryReadDto {
-                Id = c.Id,
-                Name = c.Name
-            });
-        }
-
-        public async Task<bool> DeleteCategoryAsync(int id) {
-            var categoria = await _context.Categories.FindAsync(id);
-
-            if (categoria == null) return false;
-
-            _context.Categories.Remove(categoria);
-            await _context.SaveChangesAsync();
-            
-            return true;
-        }
+            return false;
+        }        
 
         public async Task<string> UpdateTaskAsync(int id, TaskUpdateDto updateDto) {
-            // Filtramos en la base de datos
+            // 1. ¿Existe la tarea?
             var task = await _context.Tasks.FindAsync(id);
-            if (task == null) return "TASK_NO_ENCONTRADA";
+            if (task == null) return "TASK_NOT_FOUND";
 
-            // ¿Existe la categoría?
+            // 2. ¿Existe la nueva categoría?
             var categoryExists = await _context.Categories.AnyAsync(c => c.Id == updateDto.CategoryId);
-            if (!categoryExists) return "CATEGORIA_NO_ENCONTRADA";
-            
-            // Actualizar datos
+            if (!categoryExists) return "CATEGORY_NOT_FOUND";
+
+            // 3. Si todo ok, actualizamos
             task.Title = updateDto.Title;
             task.IsCompleted = updateDto.IsCompleted;
-            task.CategoryId = updateDto.CategoryId;            
-            
-            return "ÉXITO";
-            
+            task.CategoryId = updateDto.CategoryId;
+
+            await _context.SaveChangesAsync();
+            return "SUCCESS";
+        }
+
+        public async Task<bool> DeleteTaskasync(int id) {
+            var task = await _context.Tasks.FindAsync(id);
+
+            if (task == null) return false;
+
+            _context.Remove(task);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }

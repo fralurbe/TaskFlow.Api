@@ -1,6 +1,7 @@
 ﻿# 🚀 TaskFlow API - Gestión de Tareas con Azure SQL
 
-Este proyecto es una API profesional desarrollada en **.NET 9** para la gestión de tareas y categorías, conectada a una base de datos en la nube.
+Este proyecto es una API profesional desarrollada en **.NET 9** para la gestión 
+de tareas y categorías, conectada a una base de datos en la nube.
 
 ## 🛠️ Tecnologías utilizadas
 * **Lenguaje:** C#
