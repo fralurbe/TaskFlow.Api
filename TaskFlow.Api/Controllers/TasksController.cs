@@ -5,7 +5,8 @@ using TaskFlow.Api.Services;
 
 namespace TaskFlow.Api.Controllers {
     [ApiController]
-    [Route("api/[controller]")] // La URL será: api/tasks
+    //[Route("api/[controller]")] // La URL será: api/tasks
+    [Route("api/mis-tareas")]
     public class TasksController : ControllerBase {
         private readonly ITaskService _taskService;
 
@@ -18,6 +19,14 @@ namespace TaskFlow.Api.Controllers {
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks() {
             var tasks = await _taskService.GetAllTasksAsync();
+            return Ok(tasks);
+        }
+
+        [HttpGet("categoria/{categoryId}")]
+        public async Task<ActionResult<IEnumerable<TaskReadDto>>> GetTasksByCategory (int categoryId) {
+            if (categoryId < 0)
+                return NoContent();
+            var tasks = await _taskService.GetTasksByCategoryAsync(categoryId);
             return Ok(tasks);
         }
 

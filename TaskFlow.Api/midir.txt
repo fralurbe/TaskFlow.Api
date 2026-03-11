@@ -1,0 +1,25 @@
+
+        Directory: C:\CSHARP\TaskFlow\TaskFlow.Api\TaskFlow.Api
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d----        17/02/2026     11:31                  bin
+d----        10/03/2026      7:23                  Controllers
+d----        17/02/2026     14:58                  Data
+d----        09/03/2026     10:21                  DTOs
+d----        05/03/2026     13:01                  Migrations
+d----        06/03/2026      9:17                  Models
+d----        05/03/2026     14:29                  obj
+d----        17/02/2026     11:30                  Properties
+d----        09/03/2026      9:28                  Services
+d----        17/02/2026     12:07                  Settings
+d----        17/02/2026     12:07                  Storage
+-a---        17/02/2026     11:30            127   appsettings.Development.json
+-a---        05/03/2026     13:45            311   appsettings.json
+-a---        10/03/2026      8:13              0   midir.txt
+-a---        05/03/2026     14:32           1095   Program.cs
+-a---        05/03/2026     14:29            946   TaskFlow.Api.csproj
+-a---        17/02/2026     11:31            238 ﬏  TaskFlow.Api.csproj.user
+-a---        17/02/2026     11:30            137   TaskFlow.Api.http
+

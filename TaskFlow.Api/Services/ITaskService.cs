@@ -1,4 +1,5 @@
 ﻿using TaskFlow.Api.DTOs;
+using TaskFlow.Api.Models;
 
 namespace TaskFlow.Api.Services {
     public interface ITaskService {       
@@ -14,5 +15,13 @@ namespace TaskFlow.Api.Services {
         public Task<TaskReadDto> CreateTaskAsync(TaskCreateDto taskDto);
 
         public Task DeleteTaskAsync(int id);
+
+        public Task<Category> CreateCategoryAsync(CategoryCreateDto categoryDto);
+
+        public Task<IEnumerable<CategoryReadDto>> GetAllCategoriesAsync();
+        
+        public Task<bool> DeleteCategoryAsync(int id);
+
+        public Task<IEnumerable<TaskReadDto>> GetTasksByCategoryAsync(int categoryId);
     }
 }

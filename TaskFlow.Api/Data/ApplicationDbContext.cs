@@ -8,6 +8,7 @@ namespace TaskFlow.Api.Data {
             : base(options) { }
 
         public DbSet<TaskItem> Tasks { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             // Configuración adicional si la necesitas (ej. nombres de tabla)

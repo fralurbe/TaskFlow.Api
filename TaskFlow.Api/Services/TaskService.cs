@@ -11,12 +11,32 @@ namespace TaskFlow.Api.Services {
 
         }
         public async Task<IEnumerable<TaskReadDto>> GetAllTasksAsync() {
-            var tasks = await _context.Tasks.ToListAsync();
+            // Usamos Include para cargar la categoría asociada
+            var tasks = await _context.Tasks.Include(t => t.Category).ToListAsync();
 
             return tasks.Select(t => new TaskReadDto {
                 Id = t.Id,
                 Title = t.Title,
-                IsCompleted = t.IsCompleted
+                IsCompleted = t.IsCompleted,
+                CategoryName = t.Category?.Name ?? "Sin categoría"
+            });
+        }
+
+        public async Task<IEnumerable<TaskReadDto>> GetTasksByCategoryAsync(int categoryId) {
+            bool existeCategoria = await _context.Categories.AnyAsync(c => c.Id == categoryId);
+            if (!existeCategoria)
+                return null;
+
+            var tasks = await _context.Tasks
+                .Include(t => t.Category)
+                .Where(t => t.CategoryId == categoryId)
+                .ToListAsync();
+
+            return tasks.Select(t => new TaskReadDto {
+                Id = t.Id,
+                Title = t.Title,
+                IsCompleted = t.IsCompleted,
+                CategoryName = t.Category?.Name ?? "Sin categoría"
             });
         }
 
@@ -29,6 +49,7 @@ namespace TaskFlow.Api.Services {
                 IsCompleted = t.IsCompleted
             };
         }
+        
 
         public async Task<TaskReadDto> CreateTaskAsync(TaskCreateDto taskDto) {
             if (string.IsNullOrEmpty(taskDto.Title)) {
@@ -37,19 +58,26 @@ namespace TaskFlow.Api.Services {
 
             var taskParaDb = new TaskItem {
                 Title = "IMPORTANTE " + taskDto.Title,
-                IsCompleted = false
+                CategoryId = taskDto.CategoryId,
+                IsCompleted = false,
+                CreatedAt = DateTime.UtcNow
             };
 
             _context.Tasks.Add(taskParaDb);
 
             await _context.SaveChangesAsync();
 
-            // 4. "Mapeo" de salida: Devolvemos el DTO de lectura.
-            // Ahora 'taskParaDb.Id' ya tiene el número que generó la base de datos.
+            // pero pidiéndole a SQL que haga el JOIN con las categorías.
+            var taskConInfo = await _context.Tasks
+                .Include(t => t.Category) // <--- Aquí cargamos la relación
+                .FirstOrDefaultAsync(t => t.Id == taskParaDb.Id);
+
+            // 4. "Mapeo" de salida actualizado
             return new TaskReadDto {
-                Id = taskParaDb.Id,
-                Title = taskParaDb.Title,
-                IsCompleted = taskParaDb.IsCompleted
+                Id = taskConInfo.Id,
+                Title = taskConInfo.Title,
+                IsCompleted = taskConInfo.IsCompleted,
+                CategoryName = taskConInfo.Category?.Name ?? "Sin categoría"
             };
         }
 
@@ -64,5 +92,35 @@ namespace TaskFlow.Api.Services {
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<Category> CreateCategoryAsync(CategoryCreateDto categoryDto) {
+            var nuevaCategoria = new Category {
+                Name = categoryDto.Name
+            };
+
+            _context.Categories.Add(nuevaCategoria);
+            await _context.SaveChangesAsync();
+            return nuevaCategoria;
+        }
+
+        public async  Task<IEnumerable<CategoryReadDto>> GetAllCategoriesAsync() {
+            var categories = await _context.Categories.ToListAsync();
+
+            return categories.Select(c => new CategoryReadDto {
+                Id = c.Id,
+                Name = c.Name
+            });
+        }
+
+        public async Task<bool> DeleteCategoryAsync(int id) {
+            var categoria = await _context.Categories.FindAsync(id);
+
+            if (categoria == null) return false;
+
+            _context.Categories.Remove(categoria);
+            await _context.SaveChangesAsync();
+            
+            return true;
+        }        
     }
 }
