@@ -5,6 +5,6 @@
         public bool IsCompleted { get; set; }
         public string CategoryName { get; set; }
 
-        public string Priority { get; set; }
+        public string Priority { get; set; } = string.Empty;
     }
 }

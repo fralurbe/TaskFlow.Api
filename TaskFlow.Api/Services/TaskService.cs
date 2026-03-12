@@ -62,7 +62,8 @@ namespace TaskFlow.Api.Services {
                 Title = "IMPORTANTE " + taskDto.Title,
                 CategoryId = taskDto.CategoryId,
                 IsCompleted = false,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                Priority = Priority.Medio
             };
 
             _context.Tasks.Add(taskParaDb);
@@ -79,7 +80,8 @@ namespace TaskFlow.Api.Services {
                 Id = taskConInfo.Id,
                 Title = taskConInfo.Title,
                 IsCompleted = taskConInfo.IsCompleted,
-                CategoryName = taskConInfo.Category?.Name ?? "Sin categoría"
+                CategoryName = taskConInfo.Category?.Name ?? "Sin categoría",
+                Priority = taskConInfo.Priority.ToString()
             };
         }
 
