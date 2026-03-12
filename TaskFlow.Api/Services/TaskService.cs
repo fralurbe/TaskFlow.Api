@@ -59,7 +59,7 @@ namespace TaskFlow.Api.Services {
             }
 
             var taskParaDb = new TaskItem {
-                Title = "IMPORTANTE " + taskDto.Title,
+                Title = taskDto.Title,
                 CategoryId = taskDto.CategoryId,
                 IsCompleted = false,
                 CreatedAt = DateTime.UtcNow,
