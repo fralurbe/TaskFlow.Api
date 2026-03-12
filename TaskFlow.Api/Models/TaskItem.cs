@@ -14,5 +14,6 @@ namespace TaskFlow.Api.Models {
         //Clave foránea para sql server
         public int CategoryId { get; set; }
         public Category? Category { get; set; }
+        public Priority Priority { get; set; } = Priority.Medio;
     }
 }

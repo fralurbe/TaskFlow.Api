@@ -20,6 +20,14 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+// para que, al hacer el docker-compose up, la base de datos se actualice automáticamente
+using (var scope = app.Services.CreateScope()) {
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    // Esta línea aplica las migraciones pendientes al arrancar el contenedor
+    context.Database.Migrate();
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
     app.MapOpenApi();

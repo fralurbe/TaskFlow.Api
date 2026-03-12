@@ -8,8 +8,8 @@ namespace TaskFlow.Api.Services {
         ApplicationDbContext _context;
         public TaskService(ApplicationDbContext context) {
             _context = context;
-
         }
+
         public async Task<IEnumerable<TaskReadDto>> GetAllTasksAsync() {
             // Usamos Include para cargar la categoría asociada
             var tasks = await _context.Tasks.Include(t => t.Category).ToListAsync();
@@ -18,7 +18,8 @@ namespace TaskFlow.Api.Services {
                 Id = t.Id,
                 Title = t.Title,
                 IsCompleted = t.IsCompleted,
-                CategoryName = t.Category?.Name ?? "Sin categoría"
+                CategoryName = t.Category?.Name ?? "Sin categoría",
+                Priority = t.Priority.ToString()
             });
         }
 
@@ -36,7 +37,8 @@ namespace TaskFlow.Api.Services {
                 Id = t.Id,
                 Title = t.Title,
                 IsCompleted = t.IsCompleted,
-                CategoryName = t.Category?.Name ?? "Sin categoría"
+                CategoryName = t.Category?.Name ?? "Sin categoría",
+                Priority = t.Priority.ToString()
             });
         }
 
@@ -46,10 +48,10 @@ namespace TaskFlow.Api.Services {
             return new TaskReadDto {
                 Id = t.Id,
                 Title = t.Title,
-                IsCompleted = t.IsCompleted
+                IsCompleted = t.IsCompleted,
+                Priority = t.Priority.ToString()
             };
-        }
-        
+        }        
 
         public async Task<TaskReadDto> CreateTaskAsync(TaskCreateDto taskDto) {
             if (string.IsNullOrEmpty(taskDto.Title)) {

@@ -1,0 +1,13 @@
+services:
+  taskflow-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mi-api-compose
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=host.docker.internal,1433;Database=TaskFlowDb;User Id=sa;Password=eyedrops;TrustServerCertificate=True
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
