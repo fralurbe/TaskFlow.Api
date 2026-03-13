@@ -23,9 +23,15 @@ var app = builder.Build();
 // para que, al hacer el docker-compose up, la base de datos se actualice automáticamente
 using (var scope = app.Services.CreateScope()) {
     var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<ApplicationDbContext>();
-    // Esta línea aplica las migraciones pendientes al arrancar el contenedor
-    context.Database.Migrate();
+    try {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        // Esto aplica las migraciones pendientes y crea la DB si no existe
+        context.Database.Migrate();
+        Console.WriteLine("--> Base de datos sincronizada correctamente.");
+    }
+    catch (Exception ex) {
+        Console.WriteLine($"--> Error al migrar la base de datos: {ex.Message}");
+    }
 }
 
 // Configure the HTTP request pipeline.
