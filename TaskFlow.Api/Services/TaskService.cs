@@ -63,7 +63,7 @@ namespace TaskFlow.Api.Services {
                 CategoryId = taskDto.CategoryId,
                 IsCompleted = false,
                 CreatedAt = DateTime.UtcNow,
-                Priority = Priority.Medio
+                Priority = taskDto.Priority
             };
 
             _context.Tasks.Add(taskParaDb);
@@ -112,6 +112,7 @@ namespace TaskFlow.Api.Services {
             task.Title = updateDto.Title;
             task.IsCompleted = updateDto.IsCompleted;
             task.CategoryId = updateDto.CategoryId;
+            task.Priority = updateDto.Priority;
 
             await _context.SaveChangesAsync();
             return "SUCCESS";
